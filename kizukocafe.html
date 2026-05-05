@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kizuko Café</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --blush: #f7e8e0;
+      --rose: #e8c4b8;
+      --dusty: #d4a5a5;
+      --mauve: #b47a7a;
+      --deep-mauve: #8a5252;
+      --cream: #fdf6f0;
+      --warm: #f2e4d8;
+      --text: #3d2b2b;
+      --muted: #8a6060;
+      --accent: #c97b6b;
+      --gold: #c4956a;
+      --light: #fef9f6;
+      --white: #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--light);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--cream); }
+    ::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 3px; }
+
+    /* ========== NAV ========== */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(253, 246, 240, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--rose);
+      padding: 1rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: padding 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--deep-mauve);
+      letter-spacing: 0.04em;
+    }
+    .nav-logo em { font-style: italic; color: var(--accent); }
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none; align-items: center;
+    }
+    .nav-links a {
+      font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); transition: color 0.3s; font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: 0.55rem 1.4rem; border-radius: 50px;
+      transition: background 0.3s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--mauve) !important; transform: translateY(-1px); }
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--mauve); border-radius: 2px; transition: all 0.3s;
+    }
+    .mobile-menu {
+      display: none; position: fixed; top: 70px; left: 0; width: 100%;
+      background: rgba(253,246,240,0.98); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--rose); z-index: 999;
+      padding: 2rem; flex-direction: column; gap: 1.5rem;
+    }
+    .mobile-menu a {
+      font-size: 1rem; color: var(--text); letter-spacing: 0.1em;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .mobile-menu.open { display: flex; }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: linear-gradient(155deg, #fef0ea 0%, #f7ddd6 45%, #eecfc8 100%);
+      position: relative; overflow: hidden;
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+    }
+    .hero-petal {
+      position: absolute; font-size: 1.8rem; opacity: 0.12;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero-petal:nth-child(1)  { top: 12%; left: 6%;  animation-delay: 0s; }
+    .hero-petal:nth-child(2)  { top: 20%; right: 8%; animation-delay: 1.2s; }
+    .hero-petal:nth-child(3)  { top: 65%; left: 4%;  animation-delay: 2.4s; }
+    .hero-petal:nth-child(4)  { top: 75%; right: 5%; animation-delay: 0.8s; }
+    .hero-petal:nth-child(5)  { top: 40%; left: 2%;  animation-delay: 3.2s; }
+    .hero-petal:nth-child(6)  { top: 35%; right: 3%; animation-delay: 1.8s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%       { transform: translateY(-18px) rotate(8deg); }
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid var(--rose);
+      border-radius: 50px;
+      padding: 0.45rem 1.5rem;
+      font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 2rem;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.2rem, 9vw, 6.5rem);
+      line-height: 1.04; color: var(--text);
+      margin-bottom: 1.2rem;
+      animation: fadeUp 0.9s 0.15s ease both;
+    }
+    .hero h1 em { color: var(--accent); font-style: italic; }
+    .hero-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem; font-weight: 300;
+      color: var(--muted); margin-bottom: 2.8rem;
+      font-style: italic; letter-spacing: 0.02em;
+      animation: fadeUp 1s 0.3s ease both;
+    }
+    .hero-btns {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 1s 0.45s ease both;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      border: none; padding: 1rem 2.4rem;
+      border-radius: 50px; font-size: 0.8rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-primary:hover { background: var(--deep-mauve); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(180,122,122,0.3); }
+    .btn-outline {
+      background: transparent; color: var(--accent);
+      border: 1.5px solid var(--accent);
+      padding: 1rem 2.4rem; border-radius: 50px; font-size: 0.8rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-outline:hover { background: var(--blush); transform: translateY(-3px); }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--muted); font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; animation: fadeUp 1s 0.8s ease both;
+    }
+    .scroll-dot {
+      width: 1px; height: 40px; background: var(--dusty);
+      animation: scrollLine 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== MARQUEE ========== */
+    .marquee-wrap {
+      background: var(--accent);
+      padding: 0.75rem 0;
+      overflow: hidden; white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-track span {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.74rem; letter-spacing: 0.28em;
+      text-transform: uppercase; margin-right: 3.5rem;
+    }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ========== ABOUT ========== */
+    .about {
+      padding: 8rem 3rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; max-width: 1150px; margin: 0 auto;
+      align-items: center;
+    }
+    .about-visual {
+      position: relative;
+    }
+    .about-blob {
+      aspect-ratio: 4/5;
+      background: linear-gradient(135deg, var(--blush) 0%, var(--rose) 60%, var(--dusty) 100%);
+      border-radius: 62% 38% 55% 45% / 52% 60% 40% 48%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 6rem; overflow: hidden; position: relative;
+    }
+    .about-blob::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 10px,
+        rgba(255,255,255,0.06) 10px, rgba(255,255,255,0.06) 11px
+      );
+    }
+    .about-tag {
+      position: absolute; bottom: -1.2rem; right: -1.2rem;
+      background: #fff; border: 1px solid var(--rose);
+      border-radius: 50px; padding: 0.6rem 1.4rem;
+      font-size: 0.72rem; color: var(--muted);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      box-shadow: 0 4px 20px rgba(180,122,122,0.12);
+    }
+    .about-float {
+      position: absolute; top: -1rem; left: -1rem;
+      background: var(--accent); color: #fff;
+      width: 60px; height: 60px;
+      border-radius: 50%; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 6px 20px rgba(201,123,107,0.35);
+    }
+    .about-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem; color: var(--text);
+      margin-bottom: 0.4rem; line-height: 1.1;
+    }
+    .about-text h2 em { color: var(--accent); font-style: italic; }
+    .about-line { width: 60px; height: 2px; background: var(--accent); margin: 1.4rem 0; }
+    .about-text p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 300;
+      color: var(--muted); line-height: 1.95; margin-bottom: 1rem;
+    }
+    .about-stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1rem; margin: 2rem 0;
+    }
+    .stat-box {
+      background: var(--cream); border: 1px solid var(--rose);
+      border-radius: 16px; padding: 1.2rem 1rem; text-align: center;
+    }
+    .stat-box .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; color: var(--accent); display: block;
+    }
+    .stat-box .stat-label {
+      font-size: 0.72rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.2rem;
+    }
+    .about-pills {
+      display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.5rem;
+    }
+    .pill {
+      background: var(--warm); border: 1px solid var(--rose);
+      border-radius: 50px; padding: 0.4rem 1rem;
+      font-size: 0.78rem; color: var(--muted);
+    }
+
+    /* ========== MENU SECTION ========== */
+    .menu-section { padding: 7rem 2rem; background: var(--cream); }
+    .section-header { text-align: center; margin-bottom: 4rem; }
+    .section-header .eyebrow {
+      display: inline-block;
+      font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+    .section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem); color: var(--text);
+    }
+    .section-header h2 em { color: var(--accent); font-style: italic; }
+    .section-header p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; color: var(--muted);
+      font-style: italic; margin-top: 0.8rem;
+    }
+    .ornament {
+      display: flex; align-items: center; gap: 1rem;
+      justify-content: center; margin: 1rem 0;
+      color: var(--dusty);
+    }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1; max-width: 70px;
+      height: 1px; background: var(--rose);
+    }
+    .menu-tabs {
+      display: flex; gap: 0.6rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 3rem;
+    }
+    .tab-btn {
+      background: transparent;
+      border: 1.5px solid var(--rose);
+      border-radius: 50px;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.78rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      cursor: pointer; transition: all 0.25s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent); border-color: var(--accent);
+      color: #fff; transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(201,123,107,0.25);
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.5rem; max-width: 1150px; margin: 0 auto;
+    }
+    .menu-card {
+      background: #fff;
+      border: 1px solid var(--rose);
+      border-radius: 22px;
+      padding: 1.6rem 1.5rem;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+      cursor: default;
+    }
+    .menu-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 90px; height: 90px;
+      background: radial-gradient(circle at top right, var(--blush), transparent);
+      border-radius: 0 22px 0 90px;
+    }
+    .menu-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(196,149,106,0.16);
+      border-color: var(--dusty);
+    }
+    .card-emoji { font-size: 2.2rem; margin-bottom: 0.9rem; display: block; }
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; color: var(--text);
+      margin-bottom: 0.45rem;
+    }
+    .card-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--muted);
+      font-style: italic; line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .card-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; color: var(--accent); font-weight: 600;
+    }
+    .card-badge {
+      background: var(--blush); border-radius: 50px;
+      padding: 0.22rem 0.85rem;
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--mauve);
+    }
+    .card-badge.new  { background: #ecf5e0; color: #5a7a30; }
+    .card-badge.hot  { background: #fef0ea; color: var(--accent); }
+    .card-badge.sig  { background: #f0eafa; color: #7a5aa0; }
+    .card-badge.well { background: #e8f5f0; color: #3a7a60; }
+
+    .menu-cat { display: none; }
+    .menu-cat.active { display: grid; }
+
+    /* ========== TODAY'S SPECIALS ========== */
+    .specials {
+      background: linear-gradient(135deg, var(--deep-mauve), var(--accent) 60%, var(--gold));
+      padding: 6rem 2rem; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .specials::before {
+      content: '';
+      position: absolute; top: -80px; left: -80px;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); pointer-events: none;
+    }
+    .specials::after {
+      content: '';
+      position: absolute; bottom: -60px; right: -60px;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); pointer-events: none;
+    }
+    .specials .eyebrow {
+      display: inline-block;
+      font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(255,255,255,0.65); margin-bottom: 1rem;
+    }
+    .specials h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem); color: #fff;
+      margin-bottom: 1rem;
+    }
+    .specials > p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; color: rgba(255,255,255,0.8);
+      font-style: italic; max-width: 520px;
+      margin: 0 auto 3rem;
+    }
+    .specials-grid {
+      display: flex; gap: 1.5rem;
+      justify-content: center; flex-wrap: wrap;
+      max-width: 900px; margin: 0 auto 3rem;
+    }
+    .special-card {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 20px; padding: 1.8rem 2rem;
+      color: #fff; min-width: 190px; transition: all 0.3s;
+    }
+    .special-card:hover {
+      background: rgba(255,255,255,0.22); transform: translateY(-4px);
+    }
+    .special-card .s-emoji { font-size: 2.2rem; margin-bottom: 0.7rem; display: block; }
+    .special-card .s-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; margin-bottom: 0.4rem;
+    }
+    .special-card .s-price {
+      opacity: 0.78; font-size: 0.85rem; letter-spacing: 0.05em;
+    }
+    .special-card .s-tag {
+      display: inline-block; margin-top: 0.6rem;
+      background: rgba(255,255,255,0.2); border-radius: 50px;
+      padding: 0.2rem 0.8rem; font-size: 0.65rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    /* ========== EXPERIENCE SECTION ========== */
+    .experience { padding: 7rem 2rem; background: var(--light); }
+    .experience .section-header { margin-bottom: 4rem; }
+    .exp-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+    }
+    .exp-card {
+      background: var(--cream); border: 1px solid var(--rose);
+      border-radius: 24px; padding: 2.5rem 2rem;
+      text-align: center; transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .exp-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; background: linear-gradient(90deg, var(--rose), var(--accent));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .exp-card:hover::after { transform: scaleX(1); }
+    .exp-card:hover { transform: translateY(-5px); background: #fff; }
+    .exp-icon { font-size: 2.5rem; margin-bottom: 1.2rem; display: block; }
+    .exp-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; color: var(--text); margin-bottom: 0.6rem;
+    }
+    .exp-card p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; color: var(--muted);
+      font-style: italic; line-height: 1.7;
+    }
+
+    /* ========== GALLERY STRIP ========== */
+    .gallery { padding: 6rem 2rem; background: var(--warm); overflow: hidden; }
+    .gallery .section-header { margin-bottom: 3rem; }
+    .gallery-strip {
+      display: flex; gap: 1.2rem; align-items: flex-end;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .g-card {
+      border-radius: 22px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.6rem;
+      transition: transform 0.4s;
+    }
+    .g-card:hover { transform: translateY(-8px); }
+    .g-emoji { font-size: 3.2rem; }
+    .g-label {
+      font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .g-card:nth-child(1) { background: var(--blush);   width: 190px; height: 260px; color: var(--mauve); }
+    .g-card:nth-child(2) { background: #e9f2da;        width: 190px; height: 210px; color: #5f7f42; }
+    .g-card:nth-child(3) { background: var(--rose);    width: 190px; height: 280px; color: var(--deep-mauve); }
+    .g-card:nth-child(4) { background: #f2eada;        width: 190px; height: 200px; color: var(--gold); }
+    .g-card:nth-child(5) { background: #ece4f4;        width: 190px; height: 250px; color: #7a5a9a; }
+
+    /* ========== TESTIMONIALS ========== */
+    .testimonials { padding: 7rem 2rem; background: var(--cream); }
+    .test-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem; max-width: 1000px; margin: 0 auto;
+    }
+    .test-card {
+      background: #fff; border: 1px solid var(--rose);
+      border-radius: 22px; padding: 2rem;
+      transition: all 0.3s;
+    }
+    .test-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(196,149,106,0.14); }
+    .test-stars { color: var(--gold); font-size: 1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+    .test-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; color: var(--text);
+      font-style: italic; line-height: 1.8; margin-bottom: 1.2rem;
+    }
+    .test-author { display: flex; align-items: center; gap: 0.8rem; }
+    .test-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blush), var(--dusty));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .test-name { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+    .test-handle { font-size: 0.75rem; color: var(--muted); }
+
+    /* ========== CONTACT ========== */
+    .contact { padding: 7rem 2rem; max-width: 1000px; margin: 0 auto; text-align: center; }
+    .contact-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin: 3rem 0;
+    }
+    .c-card {
+      background: var(--cream); border: 1px solid var(--rose);
+      border-radius: 22px; padding: 2.2rem 1.5rem;
+      transition: all 0.3s;
+    }
+    .c-card:hover { transform: translateY(-5px); background: #fff; box-shadow: 0 12px 36px rgba(196,149,106,0.13); }
+    .c-icon { font-size: 2.2rem; margin-bottom: 1rem; display: block; }
+    .c-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; color: var(--text); margin-bottom: 0.5rem;
+    }
+    .c-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+    .hours-wrap {
+      background: var(--cream); border: 1px solid var(--rose);
+      border-radius: 22px; padding: 2.5rem;
+      max-width: 460px; margin: 0 auto;
+    }
+    .hours-wrap h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; color: var(--text); margin-bottom: 1.5rem;
+    }
+    .h-row {
+      display: flex; justify-content: space-between;
+      padding: 0.7rem 0; border-bottom: 1px solid var(--blush);
+      font-size: 0.92rem;
+    }
+    .h-row:last-child { border: none; }
+    .h-row .day { color: var(--muted); }
+    .h-row .time { color: var(--text); }
+
+    /* ========== NEWSLETTER ========== */
+    .newsletter {
+      background: linear-gradient(150deg, var(--blush) 0%, var(--rose) 100%);
+      padding: 5rem 2rem; text-align: center;
+    }
+    .newsletter h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem; color: var(--text); margin-bottom: 0.8rem;
+    }
+    .newsletter h2 em { color: var(--accent); font-style: italic; }
+    .newsletter p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; color: var(--muted);
+      font-style: italic; margin-bottom: 2rem;
+    }
+    .nl-form {
+      display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;
+    }
+    .nl-form input {
+      background: #fff; border: 1.5px solid var(--rose);
+      border-radius: 50px; padding: 0.9rem 1.8rem;
+      font-size: 0.9rem; color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      outline: none; min-width: 280px;
+      transition: border-color 0.3s;
+    }
+    .nl-form input:focus { border-color: var(--accent); }
+    .nl-form input::placeholder { color: var(--muted); }
+
+    /* ========== FOOTER ========== */
+    footer {
+      background: var(--text); color: rgba(255,255,255,0.55);
+      padding: 4rem 3rem 2.5rem;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 3rem;
+    }
+    .f-brand .f-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; color: #fff; margin-bottom: 0.8rem;
+    }
+    .f-brand .f-logo em { color: var(--rose); font-style: italic; }
+    .f-brand p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-style: italic;
+      line-height: 1.8; max-width: 260px;
+    }
+    .f-social {
+      display: flex; gap: 0.8rem; margin-top: 1.5rem;
+    }
+    .f-social a {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: all 0.3s;
+    }
+    .f-social a:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+    .f-col h4 {
+      font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.7); margin-bottom: 1.2rem;
+      font-weight: 500;
+    }
+    .f-col ul { list-style: none; }
+    .f-col ul li { margin-bottom: 0.7rem; }
+    .f-col ul li a {
+      font-size: 0.88rem; color: rgba(255,255,255,0.45);
+      transition: color 0.3s;
+    }
+    .f-col ul li a:hover { color: var(--rose); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 2rem; max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1rem;
+      font-size: 0.78rem;
+    }
+    .f-hearts { color: var(--dusty); letter-spacing: 0.5rem; }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 900px) {
+      .about { grid-template-columns: 1fr; gap: 3rem; }
+      .about-blob { aspect-ratio: 3/2; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 650px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .about { padding: 5rem 1.5rem; }
+      .menu-section, .specials, .experience, .gallery, .testimonials, .contact, .newsletter { padding: 5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Kizuko <em>Café</em></div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#specials">Specials</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact" class="nav-cta">Visit Us</a></li>
+  </ul>
+  <button class="nav-hamburger" onclick="toggleMobile()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="toggleMobile()">About</a>
+  <a href="#menu" onclick="toggleMobile()">Menu</a>
+  <a href="#specials" onclick="toggleMobile()">Specials</a>
+  <a href="#experience" onclick="toggleMobile()">Experience</a>
+  <a href="#contact" onclick="toggleMobile()">Visit Us</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <span class="hero-petal">🌸</span>
+  <span class="hero-petal">✿</span>
+  <span class="hero-petal">🌷</span>
+  <span class="hero-petal">🌸</span>
+  <span class="hero-petal">✿</span>
+  <span class="hero-petal">🌼</span>
+  <div class="hero-badge">Est. 2022 &nbsp;·&nbsp; Bandra, Mumbai &nbsp;·&nbsp; Handcrafted with Love</div>
+  <h1>Welcome to<br><em>Kizuko Café</em></h1>
+  <p class="hero-sub">Where every sip tells a story &nbsp;✨</p>
+  <div class="hero-btns">
+    <a href="#menu" class="btn-primary">Explore Our Menu</a>
+    <a href="#contact" class="btn-outline">Find Us</a>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>☕ Handcrafted Coffee</span>
+    <span>✿ Fresh Pastries Daily</span>
+    <span>♡ Cozy Corners</span>
+    <span>🍵 Premium Matcha</span>
+    <span>✿ Seasonal Specials</span>
+    <span>♡ Good Vibes Only</span>
+    <span>🌸 Floral Lattes</span>
+    <span>✿ Homemade Syrups</span>
+    <span>♡ Free WiFi Always</span>
+    <span>☕ Handcrafted Coffee</span>
+    <span>✿ Fresh Pastries Daily</span>
+    <span>♡ Cozy Corners</span>
+    <span>🍵 Premium Matcha</span>
+    <span>✿ Seasonal Specials</span>
+    <span>♡ Good Vibes Only</span>
+    <span>🌸 Floral Lattes</span>
+    <span>✿ Homemade Syrups</span>
+    <span>♡ Free WiFi Always</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-visual">
+    <div class="about-blob">☕</div>
+    <div class="about-float">🌸</div>
+    <span class="about-tag">✿ Cozy Since 2022</span>
+  </div>
+  <div class="about-text">
+    <h2>A little <em>corner</em><br>of calm</h2>
+    <div class="about-line"></div>
+    <p>Kizuko Café is a dreamy little sanctuary where slow mornings and warm cups become a ritual. We believe in the art of taking a breath, sipping something beautiful, and staying a while.</p>
+    <p>Every drink is crafted with intention — from single-origin espresso to hand-whisked matcha, each cup is a small love letter in your day.</p>
+    <div class="about-stats">
+      <div class="stat-box"><span class="stat-num">30+</span><span class="stat-label">Menu Items</span></div>
+      <div class="stat-box"><span class="stat-num">3yr</span><span class="stat-label">In Business</span></div>
+      <div class="stat-box"><span class="stat-num">★4.9</span><span class="stat-label">Rating</span></div>
+    </div>
+    <div class="about-pills">
+      <span class="pill">🌸 Floral Lattes</span>
+      <span class="pill">🍵 Premium Matcha</span>
+      <span class="pill">🫐 Homemade Syrups</span>
+      <span class="pill">🧁 Artisan Pastries</span>
+      <span class="pill">🌿 Plant-based Options</span>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="section-header">
+    <div class="eyebrow">✿ Our Offerings</div>
+    <h2>The <em>Menu</em></h2>
+    <div class="ornament"><span>✦</span></div>
+    <p>Made fresh, made with love, made for you</p>
+  </div>
+
+  <div class="menu-tabs">
+    <button class="tab-btn active" onclick="showCat('coffee',this)">☕ Coffee</button>
+    <button class="tab-btn" onclick="showCat('matcha',this)">🍵 Matcha &amp; Tea</button>
+    <button class="tab-btn" onclick="showCat('cold',this)">🧊 Cold Drinks</button>
+    <button class="tab-btn" onclick="showCat('food',this)">🥐 Bites</button>
+    <button class="tab-btn" onclick="showCat('dessert',this)">🍰 Desserts</button>
+    <button class="tab-btn" onclick="showCat('wellness',this)">🌿 Wellness</button>
+  </div>
+
+  <!-- COFFEE -->
+  <div class="menu-cat active menu-grid" id="cat-coffee">
+    <div class="menu-card">
+      <span class="card-emoji">☕</span>
+      <div class="card-name">Signature Espresso</div>
+      <div class="card-desc">Double shot of our house blend — velvety, bold and aromatic</div>
+      <div class="card-footer"><span class="card-price">₹120</span><span class="card-badge hot">Best Seller</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌸</span>
+      <div class="card-name">Rose Latte</div>
+      <div class="card-desc">Espresso with house-made rose syrup &amp; silky oat milk foam</div>
+      <div class="card-footer"><span class="card-price">₹220</span><span class="card-badge sig">Signature</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🤎</span>
+      <div class="card-name">Cappuccino</div>
+      <div class="card-desc">Classic frothy cappuccino with perfectly textured microfoam art</div>
+      <div class="card-footer"><span class="card-price">₹160</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🫧</span>
+      <div class="card-name">Lavender Flat White</div>
+      <div class="card-desc">Ristretto shots, lavender honey, silky steamed whole milk</div>
+      <div class="card-footer"><span class="card-price">₹240</span><span class="card-badge new">New</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍫</span>
+      <div class="card-name">Mocha Melt</div>
+      <div class="card-desc">Rich dark chocolate, espresso &amp; lightly sweetened whipped cream</div>
+      <div class="card-footer"><span class="card-price">₹200</span><span class="card-badge hot">Hot Pick</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🥛</span>
+      <div class="card-name">Vanilla Bean Latte</div>
+      <div class="card-desc">Real vanilla pod infused milk with a gentle double espresso</div>
+      <div class="card-footer"><span class="card-price">₹210</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌙</span>
+      <div class="card-name">Cardamom Cortado</div>
+      <div class="card-desc">Equal parts espresso and steamed milk with a whisper of cardamom</div>
+      <div class="card-footer"><span class="card-price">₹180</span><span class="card-badge sig">Signature</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🪷</span>
+      <div class="card-name">Hibiscus Americano</div>
+      <div class="card-desc">Espresso over hibiscus-infused hot water — floral &amp; bright</div>
+      <div class="card-footer"><span class="card-price">₹170</span><span class="card-badge new">New</span></div>
+    </div>
+  </div>
+
+  <!-- MATCHA & TEA -->
+  <div class="menu-cat menu-grid" id="cat-matcha">
+    <div class="menu-card">
+      <span class="card-emoji">🍵</span>
+      <div class="card-name">Classic Matcha Latte</div>
+      <div class="card-desc">Ceremonial grade matcha whisked with oat or dairy milk</div>
+      <div class="card-footer"><span class="card-price">₹230</span><span class="card-badge hot">Best Seller</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌸</span>
+      <div class="card-name">Sakura Matcha</div>
+      <div class="card-desc">Matcha blended with cherry blossom syrup &amp; rose milk</div>
+      <div class="card-footer"><span class="card-price">₹260</span><span class="card-badge sig">Signature</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍯</span>
+      <div class="card-name">Honey Chamomile</div>
+      <div class="card-desc">Loose leaf chamomile, raw wildflower honey &amp; lemon zest</div>
+      <div class="card-footer"><span class="card-price">₹180</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🫐</span>
+      <div class="card-name">Blueberry Earl Grey</div>
+      <div class="card-desc">Bergamot tea with fresh blueberry compote &amp; cream top</div>
+      <div class="card-footer"><span class="card-price">₹200</span><span class="card-badge new">New</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌿</span>
+      <div class="card-name">Mint Sencha</div>
+      <div class="card-desc">Japanese green tea with fresh mint &amp; a hint of yuzu</div>
+      <div class="card-footer"><span class="card-price">₹170</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🔴</span>
+      <div class="card-name">Rooibos Vanilla</div>
+      <div class="card-desc">Caffeine-free rooibos with vanilla pod &amp; creamy oat milk</div>
+      <div class="card-footer"><span class="card-price">₹190</span><span class="card-badge well">Wellness</span></div>
+    </div>
+  </div>
+
+  <!-- COLD DRINKS -->
+  <div class="menu-cat menu-grid" id="cat-cold">
+    <div class="menu-card">
+      <span class="card-emoji">🧊</span>
+      <div class="card-name">Iced Kizuko Latte</div>
+      <div class="card-desc">Our signature cold brew, vanilla bean &amp; a salted caramel foam top</div>
+      <div class="card-footer"><span class="card-price">₹240</span><span class="card-badge sig">Signature</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌿</span>
+      <div class="card-name">Iced Matcha Lemonade</div>
+      <div class="card-desc">Bright matcha meets tart yuzu lemonade poured over crushed ice</div>
+      <div class="card-footer"><span class="card-price">₹220</span><span class="card-badge hot">Hot Pick</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍑</span>
+      <div class="card-name">Peach Oolong Fizz</div>
+      <div class="card-desc">Sparkling oolong with fresh white peach purée &amp; soda water</div>
+      <div class="card-footer"><span class="card-price">₹210</span><span class="card-badge new">New</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍓</span>
+      <div class="card-name">Strawberry Cold Brew</div>
+      <div class="card-desc">Slow-steeped 18hr cold brew with strawberry rose water &amp; cream</div>
+      <div class="card-footer"><span class="card-price">₹250</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍋</span>
+      <div class="card-name">Citrus Mint Cooler</div>
+      <div class="card-desc">Fresh lemon, mint, cucumber &amp; coconut water on ice</div>
+      <div class="card-footer"><span class="card-price">₹180</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🦋</span>
+      <div class="card-name">Berry Butterfly Lemonade</div>
+      <div class="card-desc">Butterfly pea flower, mixed berries &amp; sparkling lemon — colour-changing magic</div>
+      <div class="card-footer"><span class="card-price">₹230</span><span class="card-badge sig">Colour Change ✨</span></div>
+    </div>
+  </div>
+
+  <!-- FOOD BITES -->
+  <div class="menu-cat menu-grid" id="cat-food">
+    <div class="menu-card">
+      <span class="card-emoji">🥐</span>
+      <div class="card-name">Butter Croissant</div>
+      <div class="card-desc">Flaky, golden, laminated in-house every single morning</div>
+      <div class="card-footer"><span class="card-price">₹130</span><span class="card-badge hot">Daily Fresh</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌸</span>
+      <div class="card-name">Rose Jam Scone</div>
+      <div class="card-desc">Fluffy buttermilk scone with house rose petal jam &amp; clotted cream</div>
+      <div class="card-footer"><span class="card-price">₹160</span><span class="card-badge sig">Signature</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🥪</span>
+      <div class="card-name">Garden Focaccia Toast</div>
+      <div class="card-desc">Herbed focaccia with ricotta, heirloom tomatoes, basil oil &amp; sea salt</div>
+      <div class="card-footer"><span class="card-price">₹220</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🧇</span>
+      <div class="card-name">Strawberry Waffle</div>
+      <div class="card-desc">Crispy Belgian waffle, fresh strawberries, maple &amp; whipped cream</div>
+      <div class="card-footer"><span class="card-price">₹280</span><span class="card-badge hot">Weekend Fav</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🫙</span>
+      <div class="card-name">Overnight Oat Jar</div>
+      <div class="card-desc">Coconut milk oats, mixed berries, house granola &amp; honey drizzle</div>
+      <div class="card-footer"><span class="card-price">₹190</span><span class="card-badge new">New</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🥗</span>
+      <div class="card-name">Pesto Pasta Bowl</div>
+      <div class="card-desc">Cold basil pesto pasta, sun-dried tomatoes, pine nuts &amp; parmesan</div>
+      <div class="card-footer"><span class="card-price">₹260</span></div>
+    </div>
+  </div>
+
+  <!-- DESSERTS -->
+  <div class="menu-cat menu-grid" id="cat-dessert">
+    <div class="menu-card">
+      <span class="card-emoji">🍰</span>
+      <div class="card-name">Matcha Basque Cheesecake</div>
+      <div class="card-desc">Burnt Basque with a deep matcha swirl &amp; buttery crumbly base</div>
+      <div class="card-footer"><span class="card-price">₹220</span><span class="card-badge hot">Best Seller</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🧁</span>
+      <div class="card-name">Earl Grey Cupcake</div>
+      <div class="card-desc">Bergamot sponge with lavender buttercream swirl &amp; edible violet</div>
+      <div class="card-footer"><span class="card-price">₹180</span><span class="card-badge sig">Signature</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍮</span>
+      <div class="card-name">Rose Crème Brûlée</div>
+      <div class="card-desc">Silky vanilla custard with rose water &amp; a perfectly caramelised top</div>
+      <div class="card-footer"><span class="card-price">₹250</span><span class="card-badge new">New</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍪</span>
+      <div class="card-name">Brown Butter Cookie</div>
+      <div class="card-desc">Thick, chewy, nutty brown butter &amp; sea salt chocolate chip</div>
+      <div class="card-footer"><span class="card-price">₹120</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🫐</span>
+      <div class="card-name">Blueberry Tart</div>
+      <div class="card-desc">Buttery pastry shell, vanilla custard &amp; fresh glazed blueberries</div>
+      <div class="card-footer"><span class="card-price">₹200</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍫</span>
+      <div class="card-name">Dark Chocolate Mousse</div>
+      <div class="card-desc">Light as air 70% cacao mousse with tart raspberry coulis</div>
+      <div class="card-footer"><span class="card-price">₹230</span><span class="card-badge hot">Date Night</span></div>
+    </div>
+  </div>
+
+  <!-- WELLNESS -->
+  <div class="menu-cat menu-grid" id="cat-wellness">
+    <div class="menu-card">
+      <span class="card-emoji">🌙</span>
+      <div class="card-name">Moon Milk</div>
+      <div class="card-desc">Ashwagandha, warm milk, cinnamon, nutmeg &amp; raw honey blend</div>
+      <div class="card-footer"><span class="card-price">₹220</span><span class="card-badge well">Wellness</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌞</span>
+      <div class="card-name">Golden Turmeric Latte</div>
+      <div class="card-desc">Turmeric, black pepper, ginger &amp; coconut milk — an anti-inflammatory hug</div>
+      <div class="card-footer"><span class="card-price">₹200</span><span class="card-badge well">Wellness</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🫚</span>
+      <div class="card-name">Ashwagandha Cacao</div>
+      <div class="card-desc">Ceremonial cacao, ashwagandha, date syrup &amp; oat milk</div>
+      <div class="card-footer"><span class="card-price">₹240</span><span class="card-badge new">New</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🍋</span>
+      <div class="card-name">Ginger Lemon Elixir</div>
+      <div class="card-desc">Fresh ginger, lemon, manuka honey &amp; a pinch of cayenne — warm &amp; invigorating</div>
+      <div class="card-footer"><span class="card-price">₹160</span><span class="card-badge well">Immunity</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🌺</span>
+      <div class="card-name">Hibiscus Rose Hip</div>
+      <div class="card-desc">Dried hibiscus &amp; rosehip tisane, loaded with vitamin C &amp; antioxidants</div>
+      <div class="card-footer"><span class="card-price">₹180</span></div>
+    </div>
+    <div class="menu-card">
+      <span class="card-emoji">🧊</span>
+      <div class="card-name">Collagen Berry Cooler</div>
+      <div class="card-desc">Mixed berry juice with marine collagen &amp; a splash of aloe vera</div>
+      <div class="card-footer"><span class="card-price">₹260</span><span class="card-badge new">New</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALS -->
+<section class="specials" id="specials">
+  <div class="eyebrow">✿ Limited Availability</div>
+  <h2>Today's Specials ✨</h2>
+  <p>Rotating seasonal picks, made in small batches — get them before they're gone</p>
+  <div class="specials-grid">
+    <div class="special-card">
+      <span class="s-emoji">🌸</span>
+      <div class="s-name">Cherry Blossom Matcha</div>
+      <div class="s-price">₹280</div>
+      <span class="s-tag">Limited · 20 Daily</span>
+    </div>
+    <div class="special-card">
+      <span class="s-emoji">🍓</span>
+      <div class="s-name">Strawberry Tiramisu</div>
+      <div class="s-price">₹260</div>
+      <span class="s-tag">Weekend Only</span>
+    </div>
+    <div class="special-card">
+      <span class="s-emoji">🍵</span>
+      <div class="s-name">Hojicha Soft Serve</div>
+      <div class="s-price">₹200</div>
+      <span class="s-tag">Chef's Pick</span>
+    </div>
+    <div class="special-card">
+      <span class="s-emoji">🌿</span>
+      <div class="s-name">Pistachio Cloud Latte</div>
+      <div class="s-price">₹270</div>
+      <span class="s-tag">New This Week</span>
+    </div>
+  </div>
+  <a href="#menu" class="btn-primary" style="display:inline-block;margin-top:1rem">View Full Menu</a>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience" id="experience">
+  <div class="section-header">
+    <div class="eyebrow">✿ Why You'll Love It Here</div>
+    <h2>The Kizuko <em>Experience</em></h2>
+    <div class="ornament"><span>✦</span></div>
+  </div>
+  <div class="exp-grid">
+    <div class="exp-card">
+      <span class="exp-icon">🌿</span>
+      <h3>Plant-Forward</h3>
+      <p>All our drinks can be made with oat, almond, soy or coconut milk — no extra charge.</p>
+    </div>
+    <div class="exp-card">
+      <span class="exp-icon">☕</span>
+      <h3>Specialty Coffee</h3>
+      <p>We source single-origin beans from small farms and roast in-house every week.</p>
+    </div>
+    <div class="exp-card">
+      <span class="exp-icon">🌸</span>
+      <h3>House-Made Everything</h3>
+      <p>Every syrup, compote, and pastry is made fresh in our kitchen — no shortcuts.</p>
+    </div>
+    <div class="exp-card">
+      <span class="exp-icon">📚</span>
+      <h3>Slow &amp; Cozy</h3>
+      <p>Comfortable seating, curated playlists, free WiFi and a no-rush atmosphere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery">
+  <div class="section-header">
+    <div class="eyebrow">✿ Peek Inside</div>
+    <h2>Our <em>little world</em></h2>
+  </div>
+  <div class="gallery-strip">
+    <div class="g-card"><span class="g-emoji">☕</span><span class="g-label">Coffee Bar</span></div>
+    <div class="g-card"><span class="g-emoji">🌿</span><span class="g-label">Garden Nook</span></div>
+    <div class="g-card"><span class="g-emoji">🌸</span><span class="g-label">Floral Corner</span></div>
+    <div class="g-card"><span class="g-emoji">🧁</span><span class="g-label">Pastry Case</span></div>
+    <div class="g-card"><span class="g-emoji">📚</span><span class="g-label">Reading Shelf</span></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-header">
+    <div class="eyebrow">✿ Kind Words</div>
+    <h2>What people <em>say</em></h2>
+    <div class="ornament"><span>✦</span></div>
+  </div>
+  <div class="test-grid">
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-text">"The Rose Latte is honestly the most beautiful drink I've ever had. The café itself feels like stepping into a dream. I come every single Saturday."</div>
+      <div class="test-author">
+        <div class="test-avatar">🌸</div>
+        <div><div class="test-name">Anika Sharma</div><div class="test-handle">@anikasips · Mumbai</div></div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-text">"The Matcha Basque Cheesecake changed my life — no exaggeration. And the vibe in here is just so cozy and girly. Absolutely love it."</div>
+      <div class="test-author">
+        <div class="test-avatar">🍵</div>
+        <div><div class="test-name">Priya Nair</div><div class="test-handle">@priyaeats · Bandra</div></div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-text">"I work from here at least twice a week. The coffee is outstanding, the staff is warm and the playlist is always perfect. Kizuko is my happy place."</div>
+      <div class="test-author">
+        <div class="test-avatar">☕</div>
+        <div><div class="test-name">Rhea Menon</div><div class="test-handle">@rheawfh · Mumbai</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="section-header">
+    <div class="eyebrow">✿ We'd Love to See You</div>
+    <h2>Come <em>find us</em></h2>
+    <p>Pull up a chair and stay a while</p>
+  </div>
+  <div class="contact-grid">
+    <div class="c-card">
+      <span class="c-icon">📍</span>
+      <h3>Location</h3>
+      <p>12, Hill Road, Bandra West<br>Mumbai, Maharashtra 400050</p>
+    </div>
+    <div class="c-card">
+      <span class="c-icon">📞</span>
+      <h3>Reach Us</h3>
+      <p>+91 98765 43210<br>hello@kizukocafe.in</p>
+    </div>
+    <div class="c-card">
+      <span class="c-icon">🌸</span>
+      <h3>Follow Along</h3>
+      <p>@kizukocafe<br>Instagram &amp; Pinterest</p>
+    </div>
+  </div>
+  <div class="hours-wrap">
+    <h3>☕ Opening Hours</h3>
+    <div class="h-row"><span class="day">Monday – Friday</span><span class="time">8:00 am – 9:00 pm</span></div>
+    <div class="h-row"><span class="day">Saturday</span><span class="time">9:00 am – 10:00 pm</span></div>
+    <div class="h-row"><span class="day">Sunday</span><span class="time">10:00 am – 8:00 pm</span></div>
+    <div class="h-row"><span class="day">Public Holidays</span><span class="time">10:00 am – 6:00 pm</span></div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <h2>Stay in the <em>loop</em></h2>
+  <p>New seasonal menus, pop-ups &amp; exclusive events — straight to your inbox</p>
+  <form class="nl-form" onsubmit="handleNL(event)">
+    <input type="email" placeholder="your@email.com" required>
+    <button type="submit" class="btn-primary">Join the List 🌸</button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="f-brand">
+      <div class="f-logo">Kizuko <em>Café</em></div>
+      <p>A dreamy little café in Bandra where slow mornings and warm cups become a ritual.</p>
+      <div class="f-social">
+        <a href="#" aria-label="Instagram">🌸</a>
+        <a href="#" aria-label="Pinterest">📌</a>
+        <a href="#" aria-label="X / Twitter">🐦</a>
+      </div>
+    </div>
+    <div class="f-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#menu">Our Menu</a></li>
+        <li><a href="#specials">Today's Specials</a></li>
+        <li><a href="#experience">Experience</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Menu</h4>
+      <ul>
+        <li><a href="#menu">Coffee</a></li>
+        <li><a href="#menu">Matcha &amp; Tea</a></li>
+        <li><a href="#menu">Cold Drinks</a></li>
+        <li><a href="#menu">Bites &amp; Desserts</a></li>
+        <li><a href="#menu">Wellness</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="#contact">Find Us</a></li>
+        <li><a href="#contact">Opening Hours</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#">Reservations</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="f-hearts">♡ ♡ ♡ ♡ ♡</div>
+    <p style="font-size:0.78rem;opacity:0.4">© 2025 Kizuko Café · Made with love in Mumbai</p>
+    <p style="font-size:0.78rem;opacity:0.3">Privacy Policy · Terms</p>
+  </div>
+</footer>
+
+<script>
+  /* Tab switching */
+  function showCat(id, btn) {
+    document.querySelectorAll('.menu-cat').forEach(el => {
+      el.classList.remove('active');
+      el.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const cat = document.getElementById('cat-' + id);
+    if (cat) {
+      cat.classList.add('active');
+      cat.style.display = 'grid';
+    }
+    btn.classList.add('active');
+  }
+
+  /* Mobile menu */
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  /* Newsletter */
+  function handleNL(e) {
+    e.preventDefault();
+    const input = e.target.querySelector('input');
+    const btn   = e.target.querySelector('button');
+    btn.textContent  = '✓ You\'re in! 🌸';
+    btn.style.background = '#5a7a30';
+    input.value = '';
+    setTimeout(() => {
+      btn.textContent = 'Join the List 🌸';
+      btn.style.background = '';
+    }, 3000);
+  }
+
+  /* Navbar shrink on scroll */
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 60) {
+      nav.style.padding = '0.6rem 3rem';
+      nav.style.boxShadow = '0 4px 24px rgba(61,43,43,0.08)';
+    } else {
+      nav.style.padding = '1rem 3rem';
+      nav.style.boxShadow = 'none';
+    }
+  });
+
+  /* Intersection Observer fade-in */
+  const fadeEls = document.querySelectorAll('.menu-card, .exp-card, .test-card, .c-card, .special-card, .stat-box');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity    = '0';
+        entry.target.style.transform  = 'translateY(20px)';
+        entry.target.style.transition = `opacity 0.5s ${i * 0.05}s ease, transform 0.5s ${i * 0.05}s ease`;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            entry.target.style.opacity   = '1';
+            entry.target.style.transform = 'translateY(0)';
+          });
+        });
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  fadeEls.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
